@@ -1,4 +1,4 @@
-#' Simmple Contingency Table Analysis 
+#' Simple Contingency Table Analysis 
 #' 
 #' 
 #' This function returns simple measures of indepence for I x J contingency tables. Namely, 
@@ -10,6 +10,7 @@
 #' @author Ben Brennan (brennben at umich dot edu)
 #' 
 #' @param obs This is a contingency table, or it should be. That is it. If it not - then idk, you shouldn't be using this function?
+
 #' 
 #' @return 
 
