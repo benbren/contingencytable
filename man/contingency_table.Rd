@@ -2,21 +2,21 @@
 % Please edit documentation in R/contingency_table.R
 \name{contingency_table}
 \alias{contingency_table}
-\title{Simmple Contingency Table Analysis}
+\title{Simple Contingency Table Analysis}
 \usage{
 contingency_table(obs)
 }
 \arguments{
-\item{obs}{this is just a contingency table. That is it.}
+\item{obs}{This is a contingency table, or it should be. That is it. If it not - then idk, you shouldn't be using this function?}
 }
 \value{
 
 }
 \description{
-This function returns simple measures of indepence for I x J contingency tables. Namely, 
-it gives Pearsons X^2 and the likelihood ratio test statistic, G^2. Both are asymptotically distributed 
-chi-squared with I-1 x J-1 degrees of freedom. It aslo returns pearson standardized residuals for the 
-contingency table.
+This function returns simple measures of independence for I x J contingency tables. Namely,
+it gives Pearsons X^2 and the likelihood ratio test statistic, G^2. Both are asymptotically distributed
+chi-squared with (I-1) x (J-1) degrees of freedom. It aslo returns pearson standardized residuals for the
+contingency table, as well as Mantel's statistic (chi-squared (1) under the Null).
 }
 \author{
 Ben Brennan (brennben at umich dot edu)

@@ -1,0 +1,58 @@
+---
+title: "contingency_table"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{contingency_table}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(contingencytable)
+```
+
+
+This is a package dedicated to doing simple, two-way contingency table analysis. Too many packages out there to do the simple things we all need to do, even it is just preliminary analysis...
+
+Let's start with... loading the package! 
+
+```{r}
+library(contingencytable)
+```
+... and generating a random contingency table!
+
+```{r}
+X = matrix(sample(1:50,12),4,3)
+
+print(X)
+```
+
+A two-way contingency table is a contingency table relating two variables, X and Y. It is represented as an I $\times$ J table, with count $n_{ij}$ being the number of subjects with $X = i$ and $Y = j$. The total number of subjects observed ois $n = \sum_i \sum_j n_{ij}$. This is the observed contingency table. What we are interested in is the population level contingency table, that is also I $\times$ J and $\pi_{ij}$ is the true proportion of the population with $X = i$ and $Y = j$. Here,   $\sum_i \sum_j \pi_{ij} = 1$. 
+
+We use the cell frequencies $$\hat{\pi}_{ij} = n_{ij}/n$$ to estimate $\pi_{ij}$. We want to test independence... so we want to check $H_0 : \pi_{ij} = \pi_{+j}\pi_{i+}$, where $\pi_{+j}$ and $\pi_{i+}$ are both marginal over the rows and the columns, respectively. So $\pi_{+j} = P(Y = j) = \sum_i \pi_{ij}$ and $\pi_{i+} = P(X = i) = \sum_j \pi_{ij}$. To test this alternative hypothesis, we present a few options in contingency table. 
+
+## Pearson Chi- Squared
+
+Under the null, we should expect cell frequencies to be $n \hat{\pi}_{ij} = n \hat{\pi}_{i+}\hat{\pi}_{+j} = n_{+j}n_{i+}/n = \hat{\mu_{ij}}$. We don't observe those frequencies, however, but rather we observe $n_{ij}$. The Pearson Statistic is given by $$X^2 = \displaystyle\sum_{i =1}^I \sum_{j = 1}^J \frac{(n_{ij}-\hat{\mu_{ij}})^2}{\hat{\mu_{ij}}}$$. This statistc is distrbuted $\chi ^2_{(I-1)\times(J-1)}$ asymptotically under the null hypothesis. 
+
+```{r setup}
+analysis = contingency_table(X)
+
+analysis$chi2
+
+analysis$p_chi2
+
+```
+
+So we can see that there is mild significance to say X and Y, in this contingency table, are associated! 
+
+## Likelihood Ratio Statistic 
+
+```{r}
+analysis$g2
+
+analysis$p_g2
+```
