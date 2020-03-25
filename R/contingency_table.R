@@ -3,7 +3,7 @@
 #'
 #' This function returns simple measures of independence for I x J contingency tables. Namely,
 #' it gives Pearsons X^2 and the likelihood ratio test statistic, G^2. Both are asymptotically distributed
-#' chi-squared with (I-1) x (J-1) degrees of freedom. It aslo returns pearson standardized residuals for the
+#' chi-squared with (I-1) x (J-1) degrees of freedom. It also returns pearson standardized residuals for the
 #' contingency table, as well as Mantel's statistic (chi-squared (1) under the Null).
 #'
 #'

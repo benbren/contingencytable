@@ -1,5 +1,5 @@
 ---
-title: "contingency_table"
+title: "So ... what is this?"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{contingency_table}
@@ -11,7 +11,6 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-library(contingencytable)
 ```
 
 
@@ -25,18 +24,19 @@ library(contingencytable)
 ... and generating a random contingency table!
 
 ```{r}
+set.seed(159)
 X = matrix(sample(1:50,12),4,3)
 
 print(X)
 ```
 
-A two-way contingency table is a contingency table relating two variables, X and Y. It is represented as an I $\times$ J table, with count $n_{ij}$ being the number of subjects with $X = i$ and $Y = j$. The total number of subjects observed ois $n = \sum_i \sum_j n_{ij}$. This is the observed contingency table. What we are interested in is the population level contingency table, that is also I $\times$ J and $\pi_{ij}$ is the true proportion of the population with $X = i$ and $Y = j$. Here,   $\sum_i \sum_j \pi_{ij} = 1$. 
+A two-way contingency table is a contingency table relating two variables, X and Y. It is represented as an I $\times$ J table, with count $n_{ij}$ being the number of subjects with $X = i$ and $Y = j$. The total number of subjects observed is $n = \sum_i \sum_j n_{ij}$. This is the observed contingency table. What we are interested in is the population level contingency table, that is also I $\times$ J and $\pi_{ij}$ is the true proportion of the population with $X = i$ and $Y = j$. Here,   $\sum_i \sum_j \pi_{ij} = 1$. 
 
-We use the cell frequencies $$\hat{\pi}_{ij} = n_{ij}/n$$ to estimate $\pi_{ij}$. We want to test independence... so we want to check $H_0 : \pi_{ij} = \pi_{+j}\pi_{i+}$, where $\pi_{+j}$ and $\pi_{i+}$ are both marginal over the rows and the columns, respectively. So $\pi_{+j} = P(Y = j) = \sum_i \pi_{ij}$ and $\pi_{i+} = P(X = i) = \sum_j \pi_{ij}$. To test this alternative hypothesis, we present a few options in contingency table. 
+We use the cell frequencies $$\hat{\pi}_{ij} = n_{ij}/n$$ to estimate $\pi_{ij}$. We want to test independence... so we want to check $H_0 : \pi_{ij} = \pi_{+j}\pi_{i+}$, where $\pi_{+j}$ and $\pi_{i+}$ are both marginal over the rows and the columns, respectively. So $\pi_{+j} = P(Y = j) = \sum_i \pi_{ij}$ and $\pi_{i+} = P(X = i) = \sum_j \pi_{ij}$. To test this alternative hypothesis, we present a few options in contingency table. All of these assume $n$ is fixed, which is called multinomial sampling. I think that is a pretty easy assumption to verify or to at least justify, but know that it is assumed. :) 
 
 ## Pearson Chi- Squared
 
-Under the null, we should expect cell frequencies to be $n \hat{\pi}_{ij} = n \hat{\pi}_{i+}\hat{\pi}_{+j} = n_{+j}n_{i+}/n = \hat{\mu_{ij}}$. We don't observe those frequencies, however, but rather we observe $n_{ij}$. The Pearson Statistic is given by $$X^2 = \displaystyle\sum_{i =1}^I \sum_{j = 1}^J \frac{(n_{ij}-\hat{\mu_{ij}})^2}{\hat{\mu_{ij}}}$$. This statistc is distrbuted $\chi ^2_{(I-1)\times(J-1)}$ asymptotically under the null hypothesis. 
+Under the null, we should expect cell frequencies to be $n \hat{\pi}_{ij} = n \hat{\pi}_{i+}\hat{\pi}_{+j} = n_{+j}n_{i+}/n = \hat{\mu_{ij}}$. We don't observe those frequencies, however, but rather we observe $n_{ij}$. The Pearson Statistic is given by $$X^2 = \displaystyle\sum_{i =1}^I \sum_{j = 1}^J \frac{(n_{ij}-\hat{\mu_{ij}})^2}{\hat{\mu_{ij}}}$$. This statistic is distributed $\chi ^2_{(I-1)\times(J-1)}$ asymptotically under the null hypothesis. 
 
 ```{r setup}
 analysis = contingency_table(X)
@@ -47,12 +47,18 @@ analysis$p_chi2
 
 ```
 
-So we can see that there is mild significance to say X and Y, in this contingency table, are associated! 
+Above, we get $X^2$ and the corresponding p-value. So we can see that there is *very* strong evidence to say X and Y, in this contingency table, are associated! 
 
 ## Likelihood Ratio Statistic 
+
+The likelihood ratio statistic is given by noticing the kernel of likelihood of a certain table, under multinomial sampling, is given by $\prod_i \prod_j \pi_{ij}^{n_{ij}}$. Under $H_0, \; \pi_{ij} = \pi_{+j}\pi_{i+} = n_{i+}n_{+j}/n$ and, in general ($H_A$), $\pi_{ij} = n_{ij}/n$. Then, the likelihood ratio statistic is given by $G = -2\log\Lambda$ where $$\Lambda = \frac{\prod_i \prod_j (n_{i+}n_{+j})^{n_{ij}}}{n^n \prod_i \prod_j n_{ij}^{n_{ij}}}$$ Therefore $G^2 = 2 \sum_i \sum_j n_{ij}\log(n_{ij}/\hat{\mu_{ij}})$ which is asymptotically $\chi^2_{(1)}$ under $H_0$. 
 
 ```{r}
 analysis$g2
 
 analysis$p_g2
 ```
+
+Here, the function returns $G^2$ and corresponding p-value. Again, we see strong evidence to reject the claim of independence. 
+
+The other two items it returns are the pearson standardized residuals. A value above 2 or 3 3 in a cell corresponds to a lack of fit (i.e. the lack of independence may be leveraged by this group). Mantel's statistic (m) is $M^2 = (n-1)r^2$ where $r$ is the correlation coefficient. This is only interpretable when groups are ordinal, and you are checking if there is some monotone linear relationship between the X and Y. This is $\chi_{(1)}^2$ under the null. In our implementation, we just give labels $1, \dots, J$ and $1, \dots, I$ to Y and X to compute this. 
